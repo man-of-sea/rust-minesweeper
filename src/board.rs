@@ -38,8 +38,16 @@ impl Board {
         }
     }
 
+    // Funkcja pomocnicza zliczająca miny sąsiadujące z polem
+    pub fn count_adjacent_mines(&self, row: usize, col: usize) -> u8 {
+        self.neighbours(row, col)
+            .iter()
+            .filter(|&&(r, c)| self.cells[r][c].is_mine)
+            .count() as u8
+    }
+
     // Funkcja pomocnicza zwracająca sąsiadów pola
-    pub fn neighbours(&self, row: usize, col: usize) -> Vec<(usize, usize)> {
+    fn neighbours(&self, row: usize, col: usize) -> Vec<(usize, usize)> {
         let mut result = vec![];
 
         for dr in -1..=1 {

@@ -4,7 +4,7 @@ mod cell;
 use board::{Board};
 
 fn main() {
-    let board = Board::new(9, 9, 0);
-    let neighbours = board.neighbours(3, 0);
-    println!("{:?}", neighbours);
+    let mut board = Board::new(9, 9, 50);
+    board.place_mines(4, 4);
+    println!("{:?}", board.count_adjacent_mines(4, 4));
 }
