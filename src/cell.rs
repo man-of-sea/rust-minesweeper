@@ -1,11 +1,12 @@
-enum CellState {
+pub enum CellState {
     Hidden,
     Revealed,
     Flagged,
 }
 
-struct Cell {
-    is_mine: bool,
-    adjacent: u8,
-    state: CellState,
+pub struct Cell {
+    pub is_mine: bool,
+    pub adjacent: u8,
+    pub state: CellState,
 }
+
