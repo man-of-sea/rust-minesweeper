@@ -22,5 +22,19 @@ impl Board {
             won: false,
         }
     }
+
+    pub fn place_mines(&mut self, safe_row: usize, safe_col: usize) {
+        // Tworzymy wektor współrzędnych pól, bez pierwszego klikniętego pola
+        let mut positions: Vec<(usize, usize)> = (0..self.rows)
+            .flat_map(|r| (0..self.cols).map(move |c| (r, c)))
+            .filter(|&(r, c)| r != safe_row || r != safe_col)
+            .collect();
+
+        // Wybieramy losowo mines z nich
+        positions.shuffle(&mut rand::thread_rng());
+        for &(r, c) in positions.iter().take(self.mines) {
+            self.cells[r][c].is_mine = true;
+        }
+    }
 }
 
