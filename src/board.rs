@@ -1,4 +1,5 @@
 use crate::cell::{Cell, CellState};
+use rand::seq::SliceRandom;
 
 pub struct Board {
     pub rows: usize,
@@ -16,7 +17,7 @@ impl Board {
             rows,
             cols,
             mines,
-            cells: vec![vec![Cell:new(); cols]; rows],
+            cells: vec![vec![Cell::new(); cols]; rows],
             mines_placed: false,
             game_over: false,
             won: false,
@@ -27,7 +28,7 @@ impl Board {
         // Tworzymy wektor współrzędnych pól, bez pierwszego klikniętego pola
         let mut positions: Vec<(usize, usize)> = (0..self.rows)
             .flat_map(|r| (0..self.cols).map(move |c| (r, c)))
-            .filter(|&(r, c)| r != safe_row || r != safe_col)
+            .filter(|&(r, c)| r != safe_row || c != safe_col)
             .collect();
 
         // Wybieramy losowo mines z nich
@@ -35,6 +36,26 @@ impl Board {
         for &(r, c) in positions.iter().take(self.mines) {
             self.cells[r][c].is_mine = true;
         }
+    }
+
+    // Funkcja pomocnicza zwracająca sąsiadów pola
+    pub fn neighbours(&self, row: usize, col: usize) -> Vec<(usize, usize)> {
+        let mut result = vec![];
+
+        for dr in -1..=1 {
+            for dc in -1..=1 {
+                if dr == 0 && dc == 0 {
+                    continue;
+                }
+                let r = row as i32 + dr;
+                let c = col as i32 + dc;
+                if r >= 0 && r < self.rows as i32 && c >= 0 && c < self.cols as i32 {
+                    result.push((r as usize, c as usize));
+                }
+            }
+        }
+
+        result
     }
 }
 

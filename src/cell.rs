@@ -1,9 +1,11 @@
+#[derive(Clone)]
 pub enum CellState {
     Hidden,
     Revealed,
     Flagged,
 }
 
+#[derive(Clone)]
 pub struct Cell {
     pub is_mine: bool,
     pub adjacent: u8,
