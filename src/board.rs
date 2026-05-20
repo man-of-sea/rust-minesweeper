@@ -10,3 +10,17 @@ pub struct Board {
     pub won: bool
 }
 
+impl Board {
+    pub fn new(rows: usize, cols: usize, mines: usize) -> Self {
+        Board {
+            rows,
+            cols,
+            mines,
+            cells: vec![vec![Cell:new(); cols]; rows],
+            mines_placed: false,
+            game_over: false,
+            won: false,
+        }
+    }
+}
+

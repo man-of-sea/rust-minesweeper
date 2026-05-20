@@ -10,3 +10,12 @@ pub struct Cell {
     pub state: CellState,
 }
 
+impl Cell {
+    pub fn new() -> Self {
+        Cell {
+            is_mine: false,
+            adjacent: 0,
+            state: CellState::Hidden,
+        }
+    }
+}
