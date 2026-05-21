@@ -50,7 +50,7 @@ impl Board {
     }
 
     // Funkcja pomocnicza zliczająca miny sąsiadujące z polem
-    pub fn count_adjacent_mines(&self, row: usize, col: usize) -> u8 {
+    fn count_adjacent_mines(&self, row: usize, col: usize) -> u8 {
         self.neighbours(row, col)
             .iter()
             .filter(|&&(r, c)| self.cells[r][c].is_mine)
@@ -75,6 +75,63 @@ impl Board {
         }
 
         result
+    }
+
+    pub fn reveal(&mut self, row: usize, col: usize) {
+        // Przy pierwszym kliknięciu ustawiamy miny, żeby uniknąć natychmiastowej przegranej
+        if !self.mines_placed {
+            self.place_mines(row, col);
+        }
+
+        let cell = &self.cells[row][col];
+
+        // Nie odkrywamy pola, które jest oflagowane lub już odkryte
+        if cell.state == CellState::Revealed || cell.state == CellState::Flagged {
+            return;
+        }
+
+        if cell.is_mine {
+            self.reveal_all_mines();
+            self.game_over = true;
+            return;
+        }
+
+        // Odkrywanie klikniętego pola. Może się zdarzyć, że klikniemy na pole nie sąsiadujące z minami.
+        // W takim wypadku kontynuujemy odkrywanie, aż wszystkie odkryte pola będą sąsiadowały z minami.
+        let mut queue = std::collections::VecDeque::new();
+        queue.push_back((row, col));
+
+        while let Some((r, c)) = queue.pop_front() {
+            let cell = &mut self.cells[r][c];
+
+            if cell.state == CellState::Revealed {
+                continue;
+            }
+            if cell.state == CellState::Flagged {
+                continue;
+            }
+
+            cell.state = CellState::Revealed;
+
+            if cell.adjacent == 0 {
+                let neighbours = self.neighbours(r, c);
+                for (nr, nc) in neighbours {
+                    queue.push_back((nr, nc));
+                }
+            }
+
+        }
+    }
+
+    // Funkcja pomocnicza do odkrycia wszystkich min po przegranej
+    fn reveal_all_mines(&mut self) {
+        for r in 0..self.rows {
+            for c in 0..self.cols {
+                if self.cells[r][c].is_mine {
+                    self.cells[r][c].state = CellState::Revealed;
+                }
+            }
+        }
     }
 }
 
