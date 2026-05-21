@@ -6,5 +6,11 @@ use board::{Board};
 fn main() {
     let mut board = Board::new(9, 9, 50);
     board.place_mines(4, 4);
-    println!("{:?}", board.count_adjacent_mines(4, 4));
+    
+    for i in 0..board.rows {
+        for j in 0..board.cols {
+            print!("{:?} ", board.cells[i][j].adjacent);
+        }
+        print!("\n");
+    }
 }

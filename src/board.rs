@@ -36,6 +36,17 @@ impl Board {
         for &(r, c) in positions.iter().take(self.mines) {
             self.cells[r][c].is_mine = true;
         }
+
+        // Zliczamy ile min sąsiaduje z każdym polem
+        for r in 0..self.rows {
+            for c in 0..self.cols {
+                if !self.cells[r][c].is_mine {
+                    self.cells[r][c].adjacent = self.count_adjacent_mines(r, c);
+                }
+            }
+        }
+
+        self.mines_placed = true;
     }
 
     // Funkcja pomocnicza zliczająca miny sąsiadujące z polem
