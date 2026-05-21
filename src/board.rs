@@ -120,6 +120,10 @@ impl Board {
                 }
             }
         }
+
+        if self.is_won() {
+            self.won = true;
+        }
     }
 
     pub fn toggle_flag(&mut self, row: usize, col: usize) {
@@ -140,6 +144,11 @@ impl Board {
         self.cells.iter().flatten()
             .filter(|c| c.state == CellState::Flagged)
             .count()
+    }
+
+    fn is_won(&self) {
+        self.cells.iter().flatter()
+            all(|cell| cell.is_mine || cell.state == CellState::Revealed)
     }
 
     // Funkcja pomocnicza do odkrycia wszystkich min po przegranej
