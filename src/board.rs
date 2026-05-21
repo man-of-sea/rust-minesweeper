@@ -24,7 +24,7 @@ impl Board {
         }
     }
 
-    pub fn place_mines(&mut self, safe_row: usize, safe_col: usize) {
+    fn place_mines(&mut self, safe_row: usize, safe_col: usize) {
         // Tworzymy wektor współrzędnych pól, bez pierwszego klikniętego pola
         let mut positions: Vec<(usize, usize)> = (0..self.rows)
             .flat_map(|r| (0..self.cols).map(move |c| (r, c)))
@@ -119,7 +119,20 @@ impl Board {
                     queue.push_back((nr, nc));
                 }
             }
+        }
+    }
 
+    pub fn toggle_flag(&mut self, row: usize, col: usize) {
+        let cell = &mut self.cells[row][col];
+
+        if cell.state == CellState::Revealed {
+            return;
+        }
+        
+        cell.state = match cell.state {
+            CellState::Hidden  => CellState::Flagged,
+            CellState::Flagged => CellState::Hidden,
+            _                  => return,
         }
     }
 
