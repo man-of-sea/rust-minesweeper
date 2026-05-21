@@ -136,6 +136,12 @@ impl Board {
         }
     }
 
+    pub fn flags_placed(&self) {
+        self.cells.iter().flatten()
+            .filter(|c| c.state == CellState::Flagged)
+            .count()
+    }
+
     // Funkcja pomocnicza do odkrycia wszystkich min po przegranej
     fn reveal_all_mines(&mut self) {
         for r in 0..self.rows {
