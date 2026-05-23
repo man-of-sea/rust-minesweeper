@@ -32,6 +32,13 @@ fn run() -> io::Result<()> {
     loop {
         render::draw(&board, cursor_row, cursor_col);
 
+        if board.game_over {
+            render::draw_message("You lost! Press q to quit or r to restart.");
+        }
+        else if board.won {
+            render::draw_message("You won! Press q to quit or r to restart.");
+        }
+
         if let Event::Key(key) = event::read()? {
             if key.kind == KeyEventKind::Press {
                 match key.code {

@@ -95,3 +95,15 @@ fn draw_footer(stdout: &mut io::Stdout) {
         ResetColor
     ).unwrap();
 }
+
+pub fn draw_message(msg: &str) {
+    let mut stdout = io::stdout();
+    queue!(
+        stdout,
+        Print("\r\n\r\n"),
+        SetForegroundColor(Color::Yellow),
+        Print(format!("  {}", msg)),
+        ResetColor
+    ).unwrap();
+    stdout.flush().unwrap();
+}
