@@ -1,22 +1,26 @@
 mod board;
 mod cell;
+mod render;
 
 use board::{Board};
-use cell::{Cell, CellState};
+use crossterm::{
+    cursor,
+    event,
+    execute,
+    terminal
+};
+use std::io;
 
 fn main() {
-    let mut board = Board::new(9, 9, 9);
+    let mut board = Board::new(9, 9, 5);
     board.reveal(4, 4);
-    
-    for i in 0..board.rows {
-        for j in 0..board.cols {
-            if board.cells[i][j].state == CellState::Revealed {
-                print!("{:?} ", board.cells[i][j].adjacent);
-            }
-            else if board.cells[i][j].state == CellState::Hidden {
-                print!("# ");
-            }
-        }
-        print!("\n");
-    }
+
+    terminal::enable_raw_mode().unwrap();
+    execute!(io::stdout(), cursor::Hide).unwrap();
+
+    render::draw(&board, 0, 0);
+    event::read().unwrap();
+
+    execute!(io::stdout(), cursor::Show).unwrap();
+    terminal::disable_raw_mode().unwrap();
 }

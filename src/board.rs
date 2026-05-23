@@ -140,15 +140,15 @@ impl Board {
         }
     }
 
-    pub fn flags_placed(&self) {
+    pub fn flags_placed(&self) -> usize {
         self.cells.iter().flatten()
             .filter(|c| c.state == CellState::Flagged)
             .count()
     }
 
-    fn is_won(&self) {
-        self.cells.iter().flatter()
-            all(|cell| cell.is_mine || cell.state == CellState::Revealed)
+    fn is_won(&self) -> bool {
+        self.cells.iter().flatten()
+            .all(|cell| cell.is_mine || cell.state == CellState::Revealed)
     }
 
     // Funkcja pomocnicza do odkrycia wszystkich min po przegranej
