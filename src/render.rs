@@ -13,9 +13,22 @@ pub fn draw(board: &Board, cursor_row: usize, cursor_col: usize) {
 
     queue!(stdout, terminal::Clear(ClearType::All), cursor::MoveTo(0, 0)).unwrap();
 
+    draw_header(&mut stdout, board);
     draw_board(&mut stdout, board, cursor_row, cursor_col);
+    draw_footer(&mut stdout);
 
     stdout.flush().unwrap();
+}
+
+fn draw_header(stdout: &mut io::Stdout, board: &Board) {
+    let remaining = board.mines as isize - board.flags_placed() as isize;
+    queue!(
+        stdout,
+        SetForegroundColor(Color::White),
+        Print(format!(" mines: {}   ", remaining)),
+        ResetColor,
+        Print("\r\n\r\n")
+    ).unwrap();
 }
 
 fn draw_board(stdout: &mut io::Stdout, board: &Board, cursor_row: usize, cursor_col: usize) {
@@ -71,4 +84,14 @@ fn draw_board(stdout: &mut io::Stdout, board: &Board, cursor_row: usize, cursor_
 
         queue!(stdout, Print("\r\n")).unwrap();
     }
+}
+
+fn draw_footer(stdout: &mut io::Stdout) {
+    queue!(
+        stdout,
+        Print("\r\n"),
+        SetForegroundColor(Color::DarkGrey),
+        Print("  arrows: move   space: reveal   f: flag    r: restart   q:   quit"),
+        ResetColor
+    ).unwrap();
 }
