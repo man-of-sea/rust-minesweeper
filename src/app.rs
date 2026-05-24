@@ -61,7 +61,59 @@ impl MinesweeperApp {
     }
 
     fn draw_custom_setup(&mut self, ui: &mut egui::Ui) {
-        ui.label("TODO");
+        let (mut rows, mut cols, mut mines) = 
+            if let Screen::CustomSetup { rows, cols, mines } = &self.screen {
+                (rows.clone(), cols.clone(), mines.clone())
+            } else {
+                return;
+        };
+
+        
+        ui.add_space(40.0);
+        ui.vertical_centered(|ui| { ui.heading("Custom Difficulty"); });
+        ui.add_space(20.0);
+
+        ui.label("Rows (5 - 30):");
+        ui.text_edit_singleline(&mut rows);
+        ui.add_space(8.0);
+
+        ui.label("Cols (5 - 50):");
+        ui.text_edit_singleline(&mut cols);
+        ui.add_space(8.0);
+
+        ui.label("Mines:");
+        ui.text_edit_singleline(&mut mines);
+        ui.add_space(16.0);
+
+        let mut start = false;
+        let mut back  = false;
+
+        ui.horizontal(|ui| {
+            if ui.button("Start").clicked { start = true };
+            if ui.button("Back").clicked  { back  = true  };
+        });
+
+        if let Screen::CustomSetup { rows: r, cols: c, mines: m } = &mut self.screen {
+            *r = rows.clone();
+            *c = cols.clone();
+            *m = mines.clone();
+        } 
+
+        if start {
+            let parsed_rows = rows.trim().parse::<usize>();
+            let parsed_cols = cols.trim().parse::<usize>();
+            let parsed_mines = mines.trim().parse::<usize>();
+
+            if let (Ok(r), Ok(c), Ok(m)) = (parsed_rows, parsed_cols, parsed_mines) {
+                if r >= 5 && r <= 30 && c >= 5 && c <= 50 && m >= 1 && m < r * c {
+                    self.start_game(Difficulty::Custom { rows: r, cols: c, mines: m });
+                }
+            }
+        }
+
+        if back {
+            self.screen = Screen::Menu { selected: 0 };
+        }
     }
 
     fn draw_game(&mut self, ui: &mut egui::Ui) {
