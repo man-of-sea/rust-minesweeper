@@ -1,13 +1,15 @@
 mod board;
 mod cell;
 mod render;
+mod difficulty;
 
+use difficulty::Difficulty;
 use board::{Board};
 use crossterm::{
     cursor,
     event::{self, Event, KeyCode, KeyEventKind},
     execute,
-    terminal::{self, ClearType}
+    terminal
 };
 use std::io;
 

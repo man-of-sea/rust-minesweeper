@@ -7,6 +7,50 @@ use crossterm::{
 use std::io::{self, Write};
 use crate::board::Board;
 use crate::cell::CellState;
+use crate::difficulty::Difficulty;
+
+pub fn draw_menu(options: &[Difficulty], selected: usize) {
+    let mut stdout = io::stdout();
+    queue!(stdout, terminal::Clear(ClearType::All), cursor::MoveTo(0, 0)).unwrap();
+
+    queue!(
+        stdout,
+        SetForegroundColor(Color::White),
+        Print("   MINESWEEPER\r\n\r\n"),
+        ResetColor
+    ).unwrap();
+
+    for (i, option) in options.iter().enumerate() {
+        if i == selected {
+            queue!(
+                stdout,
+                SetForegroundColor(Color::Black),
+                SetBackgroundColor(Color::Yellow),
+                Print(format!("  > {}  ", option.label())),
+                ResetColor,
+                Print("\r\n")
+            ).unwrap();
+        }
+        else {
+            queue!(
+                stdout,
+                SetForegroundColor(Color::White),
+                Print(format!("    {}", option.label())),
+                ResetColor,
+                Print("\r\n")
+            ).unwrap();
+        }
+
+        queue!(
+            stdout,
+            SetForegroundColor(Color::DarkGrey),
+            Print("  arrows: move   enter: select   q: quit"),
+            ResetColor
+        ).unwrap();
+
+        stdout.flush().unwrap();
+    }
+}
 
 pub fn draw(board: &Board, cursor_row: usize, cursor_col: usize) {
     let mut stdout = io::stdout();
