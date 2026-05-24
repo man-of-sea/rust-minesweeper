@@ -40,16 +40,16 @@ pub fn draw_menu(options: &[Difficulty], selected: usize) {
                 Print("\r\n")
             ).unwrap();
         }
-
-        queue!(
-            stdout,
-            SetForegroundColor(Color::DarkGrey),
-            Print("  arrows: move   enter: select   q: quit"),
-            ResetColor
-        ).unwrap();
-
-        stdout.flush().unwrap();
     }
+
+    queue!(
+        stdout,
+        SetForegroundColor(Color::DarkGrey),
+        Print("  arrows: move   enter: select   q: quit"),
+        ResetColor
+    ).unwrap();
+
+    stdout.flush().unwrap();
 }
 
 pub fn draw(board: &Board, cursor_row: usize, cursor_col: usize) {
