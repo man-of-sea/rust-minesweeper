@@ -4,7 +4,7 @@ use crate::cell::CellState;
 use crate::difficulty::Difficulty;
 
 enum Screen {
-    Menu { selected: usize },
+    Menu,
     CustomSetup { rows: String, cols: String, mines: String },
     Playing
 }
@@ -12,7 +12,8 @@ enum Screen {
 pub struct MinesweeperApp {
     board: Option<Board>,
     difficulty: Difficulty,
-    screen: Screen
+    screen: Screen,
+    needs_resize: bool
 }
 
 impl MinesweeperApp {
@@ -20,7 +21,8 @@ impl MinesweeperApp {
         MinesweeperApp {
             board: None,
             difficulty: Difficulty::Beginner,
-            screen: Screen::Menu { selected : 0 }
+            screen: Screen::Menu,
+            needs_resize: false
         }
     }
     
@@ -59,6 +61,7 @@ impl MinesweeperApp {
         self.difficulty = difficulty;
         self.board = Some(Board::new(rows, cols, mines));
         self.screen = Screen::Playing;
+        self.needs_resize = true;
     }
 
     fn draw_custom_setup(&mut self, ui: &mut egui::Ui) {
@@ -113,7 +116,7 @@ impl MinesweeperApp {
         }
 
         if back {
-            self.screen = Screen::Menu { selected: 0 };
+            self.screen = Screen::Menu;
         }
     }
 
@@ -130,6 +133,15 @@ impl MinesweeperApp {
 
         let cell_size = 32.0;
         let padding   =  4.0;
+
+        if self.needs_resize {
+            let ideal_width = board.cols as f32 * (cell_size + padding) + 24.0;
+            let ideal_height = board.rows as f32 * (cell_size + padding) + 120.0;
+            ui.ctx().send_viewport_cmd(egui::ViewportCommand::InnerSize(
+                egui::vec2(ideal_width, ideal_height)
+            ));
+            self.needs_resize = false;
+        }
 
         ui.horizontal(|ui| {
             ui.label(format!("mines: {}", board.mines as isize - board.flags_placed() as isize));
@@ -273,7 +285,7 @@ impl MinesweeperApp {
         }
 
         if go_menu {
-            self.screen = Screen::Menu { selected: 0 };
+            self.screen = Screen::Menu;
             self.board = None;
         }
     }
@@ -283,7 +295,7 @@ impl eframe::App for MinesweeperApp {
     fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
         egui::CentralPanel::default().show(ctx, |ui| {
             match &self.screen {
-                Screen::Menu { .. }         => self.draw_menu(ui),
+                Screen::Menu                => self.draw_menu(ui),
                 Screen::CustomSetup { .. }  => self.draw_custom_setup(ui),
                 Screen::Playing             => self.draw_game(ui)
             }
